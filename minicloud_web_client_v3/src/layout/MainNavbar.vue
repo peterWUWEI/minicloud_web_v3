@@ -9,21 +9,25 @@
     <template>
       <router-link class="navbar-brand" to="/">
         <h4 class="black">
-          <img class="n-logo" width="54" src="img/now-logo.png" alt="" />
-          Minicloud</h4>
+          <!-- <img class="n-logo" width="54" src="img/now-logo.png" alt="" /> -->
+          Minicloud
+        </h4>
       </router-link>
-
     </template>
     <template slot="navbar-menu">
-      <li class="nav-item" style="margin-top:3px">
+      <li class="nav-item" style="margin-top: 3px">
         <router-link class="nav-link" to="/services">
-          <h4 class="black"><i class="now-ui-icons ui-2_settings-90"></i> {{ $t("services") }}</h4>
+          <h4 class="black">
+            <i class="now-ui-icons ui-2_settings-90"></i> {{ $t("services") }}
+          </h4>
         </router-link>
       </li>
 
-      <li class="nav-item" style="margin-top:3px">
+      <li class="nav-item" style="margin-top: 3px">
         <router-link class="nav-link" to="/about">
-          <h4 class="black"><i class="now-ui-icons business_badge"></i> {{ $t("about") }}</h4>
+          <h4 class="black">
+            <i class="now-ui-icons business_badge"></i> {{ $t("about") }}
+          </h4>
         </router-link>
       </li>
 
@@ -34,19 +38,30 @@
         class="nav-item"
       >
         <nav-link to="/news">
-          <h5> <i class="now-ui-icons files_single-copy-04"></i> {{ $t("news") }} </h5>
+          <h5>
+            <i class="now-ui-icons files_single-copy-04"></i> {{ $t("news") }}
+          </h5>
         </nav-link>
         <nav-link to="/investor_info">
-          <h5> <i class="now-ui-icons education_paper"></i> {{ $t("investors") }} </h5>
+          <h5>
+            <i class="now-ui-icons education_paper"></i> {{ $t("investors") }}
+          </h5>
         </nav-link>
         <nav-link to="/sustainability">
-          <h5> <i class="now-ui-icons users_single-02"></i> {{ $t("sustainability") }} </h5>
+          <h5>
+            <i class="now-ui-icons users_single-02"></i>
+            {{ $t("sustainability") }}
+          </h5>
         </nav-link>
         <nav-link to="/career">
-          <h5> <i class="now-ui-icons ui-1_zoom-bold"></i> {{ $t("hiring") }} </h5>
+          <h5>
+            <i class="now-ui-icons ui-1_zoom-bold"></i> {{ $t("hiring") }}
+          </h5>
         </nav-link>
         <nav-link to="/faq">
-          <h5> <i class="now-ui-icons travel_info"></i> {{ $t("questions") }} </h5>
+          <h5>
+            <i class="now-ui-icons travel_info"></i> {{ $t("questions") }}
+          </h5>
         </nav-link>
       </drop-down>
       <li class="nav-item">
@@ -57,23 +72,39 @@
         icon="now-ui-icons business_globe"
         class="nav-item"
       >
-        <h5> 
-          <a class="dropdown-item" @click="changeLocale('jp')" style="cursor: pointer">
+        <h5>
+          <a
+            class="dropdown-item"
+            @click="changeLocale('jp')"
+            style="cursor: pointer"
+          >
             日本語
           </a>
         </h5>
-        <h5> 
-          <a class="dropdown-item" @click="changeLocale('en')" style="cursor: pointer">
+        <h5>
+          <a
+            class="dropdown-item"
+            @click="changeLocale('en')"
+            style="cursor: pointer"
+          >
             English
-          </a> 
+          </a>
         </h5>
         <h5>
-          <a class="dropdown-item" @click="changeLocale('cn')" style="cursor: pointer">
+          <a
+            class="dropdown-item"
+            @click="changeLocale('cn')"
+            style="cursor: pointer"
+          >
             简体中文
           </a>
         </h5>
         <h5>
-          <a class="dropdown-item" @click="changeLocale('tw')" style="cursor: pointer">
+          <a
+            class="dropdown-item"
+            @click="changeLocale('tw')"
+            style="cursor: pointer"
+          >
             繁體中文
           </a>
         </h5>
@@ -83,53 +114,53 @@
 </template>
 
 <script>
-import { DropDown, Navbar, NavLink } from '@/components';
-import { Popover } from 'element-ui';
+import { DropDown, Navbar, NavLink } from "@/components";
+import { Popover } from "element-ui";
 export default {
-  name: 'main-navbar',
+  name: "main-navbar",
   props: {
     transparent: Boolean,
-    colorOnScroll: Number
+    colorOnScroll: Number,
   },
   components: {
     DropDown,
     Navbar,
     NavLink,
-    [Popover.name]: Popover
+    [Popover.name]: Popover,
   },
   data() {
     return {
       selected: this.$i18n.locale,
       options: [
-        { value: 'jp', text: '日本語' },
-        { value: 'tw', text: '繁體中文' },
-        { value: 'cn', text: '简体中文' },
-        { value: 'en', text: 'English' },
+        { value: "jp", text: "日本語" },
+        { value: "tw", text: "繁體中文" },
+        { value: "cn", text: "简体中文" },
+        { value: "en", text: "English" },
       ],
-    }
+    };
   },
   methods: {
     onChange(event) {
-        this.$router.replace(this.switchLocalePath(event));
+      this.$router.replace(this.switchLocalePath(event));
     },
     changeLocale(language) {
       this.$i18n.locale = language;
     },
     info_title() {
-      return this.$i18n.messages[this.$i18n.locale].info
+      return this.$i18n.messages[this.$i18n.locale].info;
     },
     others_title() {
-      return this.$i18n.messages[this.$i18n.locale].others
+      return this.$i18n.messages[this.$i18n.locale].others;
     },
     language_title() {
-      return this.$i18n.messages[this.$i18n.locale].language
-    }
-  }
+      return this.$i18n.messages[this.$i18n.locale].language;
+    },
+  },
 };
 </script>
 
 <style scoped>
-  .black {
-    color: black;
-  }
+.black {
+  color: black;
+}
 </style>

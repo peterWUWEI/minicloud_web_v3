@@ -59,6 +59,9 @@ export default {
     };
   },
   created() {
+    if (!sessionStorage.getItem("data")) {
+      this.$router.push("/");
+    }
     const data = JSON.parse(sessionStorage.getItem("data"));
     this.contacts = _.filter(data, { category: "contacts" });
   },

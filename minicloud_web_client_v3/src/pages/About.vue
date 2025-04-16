@@ -131,6 +131,9 @@ export default {
     };
   },
   created() {
+    if (!sessionStorage.getItem("data")) {
+      this.$router.push("/");
+    }
     const data = JSON.parse(sessionStorage.getItem("data"));
     this.about = _.filter(data, { category: "about" });
     this.team_members = _.filter(data, { category: "teammembers" });

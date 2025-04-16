@@ -48,6 +48,9 @@ export default {
     };
   },
   created() {
+    if (!sessionStorage.getItem("data")) {
+      this.$router.push("/");
+    }
     const data = JSON.parse(sessionStorage.getItem("data"));
     this.sitepolicy = _.find(data, { category: "policies" });
   },

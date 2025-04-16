@@ -81,6 +81,9 @@ export default {
     };
   },
   created() {
+    if (!sessionStorage.getItem("data")) {
+      this.$router.push("/");
+    }
     const data = JSON.parse(sessionStorage.getItem("data"));
     let jobPosts = _.filter(data, { category: "jobs" });
     this.jobPost = _.find(jobPosts, { id: this.$route.params.id });
