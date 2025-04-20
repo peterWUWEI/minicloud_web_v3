@@ -8,12 +8,12 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   async mounted() {
-    if(sessionStorage.getItem('data')) return;
-    const res = await axios.get('/');
-    sessionStorage.setItem('data', JSON.stringify(res.data)) 
-  }
+    if (sessionStorage.getItem("data")) return;
+    const res = await axios.get("/");
+    sessionStorage.setItem("data", JSON.stringify(res.data));
+  },
 };
 </script>
