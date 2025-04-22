@@ -1,28 +1,25 @@
 <script setup>
-import { onMounted, computed, ref } from 'vue';
+import { ref, computed } from 'vue';
 import { DataService } from '@/service/DataService';
-import { useRouter, useRoute } from 'vue-router';
-import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
 const visible = ref(false);
-const about = ref(null);
 const errorMsg = ref(null);
-const status = ref('');
 const newId = ref(null);
 const tabValue = ref('jp');
+const status = ref('');
+const router = useRouter();
 const thumbnailUrl = ref(null);
 const presignedUrl = import.meta.env.VITE_BASE_URL + '/generate-presigned-url';
-const currData = ref({
+const newData = ref({
   jp: { title: '', content: '' },
   cn: { title: '', content: '' },
   tw: { title: '', content: '' },
   en: { title: '', content: '' }
 });
-const router = useRouter();
-const route = useRoute();
-const toast = useToast();
-
 const langs = ref(['jp', 'cn', 'tw', 'en']);
 const tabTitles = ref(['jp', 'cn', 'tw', 'en', 'photo']);
 const tabNames = ref({
@@ -74,30 +71,31 @@ const uploadImage = async (event) => {
   }
 };
 
-const updateAbout = async () => {
-  await DataService.update({
-    category: 'about',
-    id: route.params.id,
-    data: currData.value,
-    image_url: thumbnailUrl.value
-  });
-  router.push(`/about`);
+const createNews = async () => {
+  try {
+    await DataService.put({
+      category: 'news',
+      id: newId.value,
+      data: newData.value,
+      image_url: thumbnailUrl.value
+    });
+    router.push(`/news`);
+  } catch (err) {
+    errorMsg.value = err;
+    visible.value = true;
+  }
 };
-onMounted(async () => {
-  about.value = await DataService.findById(route.params.id);
-  thumbnailUrl.value = about.value.image_url;
-  currData.value = about.value.data;
-});
+
 const isSubmitDisabled = computed(() => {
   const allFilled =
-    currData.value.jp?.title &&
-    currData.value.cn?.title &&
-    currData.value.tw?.title &&
-    currData.value.en?.title &&
-    currData.value.jp?.content &&
-    currData.value.cn?.content &&
-    currData.value.tw?.content &&
-    currData.value.en?.content;
+    newData.value.jp?.title &&
+    newData.value.cn?.title &&
+    newData.value.tw?.title &&
+    newData.value.en?.title &&
+    newData.value.jp?.content &&
+    newData.value.cn?.content &&
+    newData.value.tw?.content &&
+    newData.value.en?.content;
   return !allFilled;
 });
 </script>
@@ -107,7 +105,7 @@ const isSubmitDisabled = computed(() => {
     <span class="text-surface-500 dark:text-surface-400 block mb-8">{{ errorMsg }}</span>
   </Dialog>
   <div class="card">
-    <form @submit.prevent="updateAbout">
+    <form @submit.prevent="createNews">
       <Tabs :value="tabValue">
         <TabList>
           <Tab v-for="tab in tabTitles" :key="tab" :value="tab" @click="tabValue = tab">{{
@@ -118,10 +116,10 @@ const isSubmitDisabled = computed(() => {
           <TabPanel v-for="(lang, index) in langs" :key="index" :value="lang">
             <div class="card flex flex-col gap-4">
               <div class="flex flex-col gap-2">
-                <label>企业信息标题</label>
+                <label>新闻标题</label>
                 <InputText
-                  v-model="currData[`${lang}`].title"
-                  :invalid="!currData[`${lang}`].title"
+                  v-model="newData[`${lang}`].title"
+                  :invalid="!newData[`${lang}`].title"
                   variant="filled"
                   placeholder="该内容必须填写"
                   type="text"
@@ -129,14 +127,14 @@ const isSubmitDisabled = computed(() => {
                 />
               </div>
               <div class="flex flex-col gap-2">
-                <label>企业信息内容</label>
+                <label>新闻内容</label>
                 <Textarea
-                  v-model="currData[`${lang}`].content"
-                  :invalid="!currData[`${lang}`].content"
-                  variant="filled"
-                  placeholder="该内容必须填写"
                   rows="10"
                   cols="30"
+                  v-model="newData[`${lang}`].content"
+                  :invalid="!newData[`${lang}`].content"
+                  variant="filled"
+                  placeholder="该内容必须填写"
                   required
                 />
               </div>
@@ -155,7 +153,7 @@ const isSubmitDisabled = computed(() => {
                 <Toast />
                 <input type="file" @change="uploadImage" />
                 <div v-if="status">{{ status }}</div>
-                <img v-if="thumbnailUrl" :src="thumbnailUrl" />
+                <!-- <img v-if="thumbnailUrl" :src="thumbnailUrl" /> -->
               </div>
             </div>
             <div class="card flex flex-col items-center gap-6">

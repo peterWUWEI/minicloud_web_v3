@@ -28,9 +28,9 @@
               {{ ele["data"][$i18n.locale].content }}
             </h5>
             <iframe
-              :src="ele.pdf_file_url"
+              :src="ele.image_url"
               style="width: 100%; height: 800px"
-              v-if="ele.pdf_file_url"
+              v-if="ele.image_url"
             ></iframe>
             <!-- <vue-pdf-embed :source="ele.pdf_file_url" v-if="ele.pdf_file_url" /> -->
           </div>
@@ -64,7 +64,7 @@ export default {
       this.$router.push("/");
     }
     const data = JSON.parse(sessionStorage.getItem("data"));
-    this.faqs = _.filter(data, { category: "investorInfo" });
+    this.investor_info = _.filter(data, { category: "investorInfo" });
   },
 };
 </script>

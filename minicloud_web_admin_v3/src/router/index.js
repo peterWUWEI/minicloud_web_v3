@@ -54,7 +54,19 @@ const router = createRouter({
         {
           path: '/teammembers',
           name: 'teammembers',
-          component: () => import('@/views/TeamMembers.vue'),
+          component: () => import('@/views/teammembers/index.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/teammembers/create',
+          name: 'create_new_teammember',
+          component: () => import('@/views/teammembers/create.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/teammembers/edit/:id',
+          name: 'edit_teammember_by_id',
+          component: () => import('@/views/teammembers/edit/_id.vue'),
           meta: { requiresAuth: true }
         },
         {
@@ -66,31 +78,91 @@ const router = createRouter({
         {
           path: '/contacts',
           name: 'contacts',
-          component: () => import('@/views/Contacts.vue'),
+          component: () => import('@/views/contacts/index.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/contacts/create',
+          name: 'create_new_contact',
+          component: () => import('@/views/contacts/create.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/contacts/edit/:id',
+          name: 'edit_contact_by_id',
+          component: () => import('@/views/contacts/edit/_id.vue'),
           meta: { requiresAuth: true }
         },
         {
           path: '/news',
           name: 'news',
-          component: () => import('@/views/News.vue'),
+          component: () => import('@/views/news/index.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/news/create',
+          name: 'create_new_news',
+          component: () => import('@/views/news/create.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/news/edit/:id',
+          name: 'edit_news_by_id',
+          component: () => import('@/views/news/edit/_id.vue'),
           meta: { requiresAuth: true }
         },
         {
           path: '/jobs',
           name: 'jobs',
-          component: () => import('@/views/Jobs.vue'),
+          component: () => import('@/views/jobs/index.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/jobs/create',
+          name: 'create_new_job',
+          component: () => import('@/views/jobs/create.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/jobs/edit/:id',
+          name: 'edit_job_by_id',
+          component: () => import('@/views/jobs/edit/_id.vue'),
           meta: { requiresAuth: true }
         },
         {
           path: '/qnas',
           name: 'qnas',
-          component: () => import('@/views/Qnas.vue'),
+          component: () => import('@/views/qnas/index.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/qnas/create',
+          name: 'create_new_qna',
+          component: () => import('@/views/qnas/create.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/qnas/edit/:id',
+          name: 'edit_qna_by_id',
+          component: () => import('@/views/qnas/edit/_id.vue'),
           meta: { requiresAuth: true }
         },
         {
           path: '/others',
           name: 'others',
-          component: () => import('@/views/Others.vue'),
+          component: () => import('@/views/others/index.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/others/create',
+          name: 'create_new_others',
+          component: () => import('@/views/others/create.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/others/edit/:id',
+          name: 'edit_others_by_id',
+          component: () => import('@/views/others/edit/_id.vue'),
           meta: { requiresAuth: true }
         }
       ]

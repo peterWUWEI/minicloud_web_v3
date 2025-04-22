@@ -8,14 +8,14 @@ import { useConfirm } from 'primevue/useconfirm';
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
-const serviceData = ref(null);
+const contactData = ref(null);
 
 const editById = (id) => {
-  router.push(`/services/edit/${id}`);
+  router.push(`/contacts/edit/${id}`);
 };
 
 const deleteById = async (id) => {
-  await DataService.deleteById('services', id);
+  await DataService.deleteById('contacts', id);
   router.go();
 };
 
@@ -55,7 +55,7 @@ const confirmDelete = async (id) => {
 };
 
 onMounted(async () => {
-  serviceData.value = await DataService.getByCategory('services');
+  contactData.value = await DataService.getByCategory('contacts');
 });
 </script>
 
@@ -63,12 +63,12 @@ onMounted(async () => {
   <Toast />
   <ConfirmDialog></ConfirmDialog>
   <div class="card">
-    <DataTable :value="serviceData" tableStyle="min-width: 50rem">
+    <DataTable :value="contactData" tableStyle="min-width: 50rem">
       <template #header>
-        <div class="text-xl font-bold">产品服务</div>
+        <div class="text-xl font-bold">联系我们</div>
       </template>
       <Column field="id" header="ID" style="width: 250px"></Column>
-      <Column field="data.jp.title" header="标题" style="width: 250px"></Column>
+      <Column field="data.jp.title" header="联系方式" style="width: 250px"></Column>
       <Column style="width: 10rem">
         <template #body="{ data }">
           <div class="flex flex-wrap gap-2">

@@ -39,5 +39,52 @@ export const DataService = {
     return targetData;
   },
 
-  async put(data) {}
+  async deleteById(category, id) {
+    // delete from local cache
+    const cacheData = JSON.parse(localStorage.getItem('data'));
+    const filteredData = cacheData.filter((ele) => ele.id !== id);
+    localStorage.setItem('data', JSON.stringify(filteredData));
+    // call backend server to make change to DB
+    await axios.delete(`${baseUrl}/${category}/${id}`);
+  },
+
+  async put(params) {
+    // change local cache
+    const cacheData = JSON.parse(localStorage.getItem('data'));
+    const ts = new Date().getTime().toString();
+    cacheData.push({
+      category: params.category,
+      id: params.id || ts,
+      data: params.data,
+      image_url: params.image_url
+    });
+    localStorage.setItem('data', JSON.stringify(cacheData));
+    // call backend server to make change to DB
+    await axios.put(`${baseUrl}/${params.category}`, {
+      category: params.category,
+      id: params.id || ts,
+      data: params.data,
+      image_url: params.image_url
+    });
+  },
+
+  async update(params) {
+    // Update local cache
+    const cacheData = JSON.parse(localStorage.getItem('data'));
+    const filteredData = cacheData.filter((ele) => ele.id !== params.id);
+    filteredData.push({
+      category: params.category,
+      id: params.id,
+      data: params.data,
+      image_url: params.image_url
+    });
+    localStorage.setItem('data', JSON.stringify(filteredData));
+    // call backend server to make change to DB
+    await axios.put(`${baseUrl}/${params.category}`, {
+      category: params.category,
+      id: params.id || ts,
+      data: params.data,
+      image_url: params.image_url
+    });
+  }
 };

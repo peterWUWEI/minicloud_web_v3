@@ -118,12 +118,12 @@ const model = ref([
         label: '其他板块',
         items: [
           {
-            label: '常见疑问列表',
-            icon: 'pi pi-fw pi-info-circle',
+            label: '其他板块列表',
+            icon: 'pi pi-fw pi-list',
             to: '/others'
           },
           {
-            label: '添加新的常见疑问',
+            label: '添加新的其他板块内容',
             icon: 'pi pi-fw pi-plus',
             to: '/others/create'
           }

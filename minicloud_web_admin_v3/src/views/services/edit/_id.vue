@@ -1,87 +1,175 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { DataService } from '@/service/DataService';
-import FileUpload from 'primevue/fileupload';
-import { useRoute } from 'vue-router';
-import Image from 'primevue/image';
+import { useRouter, useRoute } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import axios from 'axios';
 
-const fileupload = ref();
-const displayError = ref(false);
-const uploadFinish = ref(false);
-const uploadError = ref(null);
-const uploadResponse = ref(null);
-const uploadUrl = import.meta.env.VITE_BASE_URL + '/data/upload/single';
+const visible = ref(false);
 const service = ref(null);
+const errorMsg = ref(null);
+const status = ref('');
+const newId = ref(null);
+const tabValue = ref('jp');
+const thumbnailUrl = ref(null);
+const presignedUrl = import.meta.env.VITE_BASE_URL + '/generate-presigned-url';
+const currData = ref({
+  jp: { title: '', content: '' },
+  cn: { title: '', content: '' },
+  tw: { title: '', content: '' },
+  en: { title: '', content: '' }
+});
+const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 
 const langs = ref(['jp', 'cn', 'tw', 'en']);
+const tabTitles = ref(['jp', 'cn', 'tw', 'en', 'photo']);
 const tabNames = ref({
   jp: '日本語',
   cn: '简体中文',
   tw: '繁體中文',
-  en: 'English'
+  en: 'English',
+  photo: '上传图片/确认提交'
 });
 
-function handleUpload() {
-  fileupload.value.upload();
-}
+const uploadImage = async (event) => {
+  const file = event.target.files[0];
+  try {
+    // Step 1: Check file type:
+    if (!file || !file.type.startsWith('image/')) {
+      throw new Error('上传的文件仅限图片格式');
+    }
+    // Step 2: Check size:
+    if (file.size > 1024 * 1024 * 5) {
+      throw new Error('上传的图片不可以超过5MB');
+    }
+    const filetype = file.name.split('.')[1];
+    // get presigned URL
+    newId.value = new Date().getTime().toString();
+    const { data } = await axios.post(presignedUrl, {
+      id: newId.value,
+      filetype: filetype
+    });
+    status.value = '图片上传中...';
 
-const onUpload = (event) => {
-  //   console.log(event.xhr.response);
-  uploadFinish.value = true;
-  uploadResponse.value = JSON.parse(event.xhr.response);
-  // Refresh the data table
-  DataService.reload();
-};
-
-const onUploadError = (event) => {
-  displayError.value = true;
-  uploadError.value = JSON.parse(event.xhr.response)?.error;
-  // Access the FileUpload component via ref and clear the file list
-  if (fileupload.value) {
-    fileupload.value.clear();
+    // Upload to S3
+    await fetch(data, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Length': new Blob([file]).size }
+    });
+    status.value = '上传成功';
+    toast.add({
+      severity: 'info',
+      summary: 'Success',
+      detail: '上传成功',
+      life: 3000
+    });
+    thumbnailUrl.value = `https://minicloud-thumbnails.s3.amazonaws.com/uploads/${newId.value}/thumbnail.jpg`;
+  } catch (err) {
+    // handle error here to warn users
+    errorMsg.value = err;
+    visible.value = true;
   }
 };
 
+const updateService = async () => {
+  await DataService.update({
+    category: 'services',
+    id: route.params.id,
+    data: currData.value,
+    image_url: thumbnailUrl.value
+  });
+  router.push(`/services`);
+};
 onMounted(async () => {
   service.value = await DataService.findById(route.params.id);
+  thumbnailUrl.value = service.value.image_url;
+  currData.value = service.value.data;
+});
+const isSubmitDisabled = computed(() => {
+  const allFilled =
+    currData.value.jp?.title &&
+    currData.value.cn?.title &&
+    currData.value.tw?.title &&
+    currData.value.en?.title &&
+    currData.value.jp?.content &&
+    currData.value.cn?.content &&
+    currData.value.tw?.content &&
+    currData.value.en?.content;
+  return !allFilled;
 });
 </script>
 
 <template>
+  <Dialog v-model:visible="visible" modal header="出错啦" :style="{ width: '25rem' }">
+    <span class="text-surface-500 dark:text-surface-400 block mb-8">{{ errorMsg }}</span>
+  </Dialog>
   <div class="card">
-    <form @submit.prevent="">
-      <Tabs value="jp">
+    <form @submit.prevent="updateService">
+      <Tabs :value="tabValue">
         <TabList>
-          <Tab v-for="lang in langs" :key="lang" :value="lang">{{
-            tabNames[`${lang}`]
+          <Tab v-for="tab in tabTitles" :key="tab" :value="tab" @click="tabValue = tab">{{
+            tabNames[`${tab}`]
           }}</Tab>
-          <Tab key="photo" value="upload">图片</Tab>
         </TabList>
         <TabPanels>
-          <TabPanel v-for="lang in langs" :key="lang" :value="lang">
+          <TabPanel v-for="(lang, index) in langs" :key="index" :value="lang">
             <div class="card flex flex-col gap-4">
               <div class="flex flex-col gap-2">
-                <label>服务标题</label>
-                <InputText :value="service?.data[`${lang}`].title" type="text" required />
+                <label>产品/服务标题</label>
+                <InputText
+                  v-model="currData[`${lang}`].title"
+                  :invalid="!currData[`${lang}`].title"
+                  variant="filled"
+                  placeholder="该内容必须填写"
+                  type="text"
+                  required
+                />
               </div>
               <div class="flex flex-col gap-2">
-                <label>服务内容</label>
+                <label>产品/服务内容</label>
                 <Textarea
-                  :value="service?.data[`${lang}`].content"
+                  v-model="currData[`${lang}`].content"
+                  :invalid="!currData[`${lang}`].content"
+                  variant="filled"
+                  placeholder="该内容必须填写"
                   rows="10"
                   cols="30"
                   required
                 />
               </div>
+              <div class="card flex flex-col items-center gap-6">
+                <Button
+                  label="下一步"
+                  @click="tabValue = tabTitles[index + 1]"
+                  severity="Primary"
+                />
+              </div>
             </div>
           </TabPanel>
-          <TabPanel key="image" value="image">
-            <Image :src="service?.image_url" alt="Image" width="250" />
+          <TabPanel key="photo" value="photo">
+            <div class="card flex flex-col items-center gap-6">
+              <div class="card flex flex-col gap-6 items-center justify-center">
+                <Toast />
+                <input type="file" @change="uploadImage" />
+                <div v-if="status">{{ status }}</div>
+                <img v-if="thumbnailUrl" :src="thumbnailUrl" />
+              </div>
+            </div>
+            <div class="card flex flex-col items-center gap-6">
+              <Button
+                label="提交"
+                icon="pi pi-check"
+                type="submit"
+                severity="Primary"
+                :disabled="isSubmitDisabled"
+              />
+            </div>
           </TabPanel>
         </TabPanels>
       </Tabs>
-      <Button label="提交" icon="pi pi-check" type="submit" severity="Primary" />
     </form>
   </div>
 </template>

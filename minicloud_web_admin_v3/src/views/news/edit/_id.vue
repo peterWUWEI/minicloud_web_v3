@@ -6,7 +6,7 @@ import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
 
 const visible = ref(false);
-const about = ref(null);
+const news = ref(null);
 const errorMsg = ref(null);
 const status = ref('');
 const newId = ref(null);
@@ -74,19 +74,19 @@ const uploadImage = async (event) => {
   }
 };
 
-const updateAbout = async () => {
+const updateNews = async () => {
   await DataService.update({
-    category: 'about',
+    category: 'news',
     id: route.params.id,
     data: currData.value,
     image_url: thumbnailUrl.value
   });
-  router.push(`/about`);
+  router.push(`/news`);
 };
 onMounted(async () => {
-  about.value = await DataService.findById(route.params.id);
-  thumbnailUrl.value = about.value.image_url;
-  currData.value = about.value.data;
+  news.value = await DataService.findById(route.params.id);
+  thumbnailUrl.value = news.value.image_url;
+  currData.value = news.value.data;
 });
 const isSubmitDisabled = computed(() => {
   const allFilled =
@@ -107,7 +107,7 @@ const isSubmitDisabled = computed(() => {
     <span class="text-surface-500 dark:text-surface-400 block mb-8">{{ errorMsg }}</span>
   </Dialog>
   <div class="card">
-    <form @submit.prevent="updateAbout">
+    <form @submit.prevent="updateNews">
       <Tabs :value="tabValue">
         <TabList>
           <Tab v-for="tab in tabTitles" :key="tab" :value="tab" @click="tabValue = tab">{{
@@ -118,7 +118,7 @@ const isSubmitDisabled = computed(() => {
           <TabPanel v-for="(lang, index) in langs" :key="index" :value="lang">
             <div class="card flex flex-col gap-4">
               <div class="flex flex-col gap-2">
-                <label>企业信息标题</label>
+                <label>服务标题</label>
                 <InputText
                   v-model="currData[`${lang}`].title"
                   :invalid="!currData[`${lang}`].title"
@@ -129,7 +129,7 @@ const isSubmitDisabled = computed(() => {
                 />
               </div>
               <div class="flex flex-col gap-2">
-                <label>企业信息内容</label>
+                <label>服务内容</label>
                 <Textarea
                   v-model="currData[`${lang}`].content"
                   :invalid="!currData[`${lang}`].content"
