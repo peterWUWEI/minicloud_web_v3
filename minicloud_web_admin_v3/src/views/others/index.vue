@@ -15,12 +15,12 @@ const editById = (id) => {
   router.push(`/others/edit/${id}`);
 };
 
-const deleteById = async (id) => {
-  await DataService.deleteById('others', id);
+const deleteById = async (cat, id) => {
+  await DataService.deleteById(cat, id);
   router.go();
 };
 
-const confirmDelete = async (id) => {
+const confirmDelete = async (cat, id) => {
   confirm.require({
     message: '删除这条记录将无法复原！',
     header: '请再次确认',
@@ -36,7 +36,7 @@ const confirmDelete = async (id) => {
       severity: 'danger'
     },
     accept: async () => {
-      await deleteById(id);
+      await deleteById(cat, id);
       toast.add({
         severity: 'info',
         summary: '确认',
@@ -86,7 +86,7 @@ onMounted(async () => {
               icon="pi pi-trash"
               rounded
               severity="danger"
-              @click="confirmDelete(data.id)"
+              @click="confirmDelete('investorInfo', data.id)"
             />
           </div>
         </template>
@@ -115,7 +115,7 @@ onMounted(async () => {
               icon="pi pi-trash"
               rounded
               severity="danger"
-              @click="confirmDelete(data.id)"
+              @click="confirmDelete('sustainability', data.id)"
             />
           </div>
         </template>
