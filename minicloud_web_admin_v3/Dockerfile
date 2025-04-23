@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the Vue app
-CMD ["npm", "run", "dev"]
+RUN npm run build
 
 # Use Nginx to serve the built files
 FROM nginx:alpine as production-stage
