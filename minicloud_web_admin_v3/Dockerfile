@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:16 as build-stage
+FROM node:20.1.0 as build-stage
 
 # Set the working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the Vue app
-RUN npm run build
+CMD ["npm", "run", "dev"]
 
 # Use Nginx to serve the built files
 FROM nginx:alpine as production-stage

@@ -168,25 +168,9 @@ const router = createRouter({
       ]
     },
     {
-      path: '/notfound',
-      name: 'notfound',
-      component: () => import('@/views/pages/NotFound.vue')
-    },
-
-    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/pages/Login.vue')
-    },
-    {
-      path: '/access',
-      name: 'accessDenied',
-      component: () => import('@/views/pages/Access.vue')
-    },
-    {
-      path: '/error',
-      name: 'error',
-      component: () => import('@/views/pages/Error.vue')
     }
   ]
 });

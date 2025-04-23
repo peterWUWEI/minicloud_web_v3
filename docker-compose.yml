@@ -1,13 +1,13 @@
 version: "3.8"
 
 services:
-  backend:
+  admin:
     build: ./minicloud_web_admin_v3
     env_file: "./minicloud_web_admin_v3/.env"
     ports:
-      - "80:3000"
+      - "3000:80"
 
-  frontend:
+  client:
     build: ./minicloud_web_client_v3
     env_file: "./minicloud_web_client_v3/.env"
     ports:
