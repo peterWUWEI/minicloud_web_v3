@@ -11,4 +11,4 @@ services:
     build: ./minicloud_web_client_v3
     env_file: "./minicloud_web_client_v3/.env"
     ports:
-      - "80:80"
+      - "3001:80"
